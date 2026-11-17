@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+// Adds `reveal-visible` the first time the element's top edge scrolls into view.
+// threshold 0 matters: tall elements can never reach a 20% visibility ratio.
 export function useScrollReveal(options = {}) {
     const ref = useRef(null);
 
@@ -15,8 +17,8 @@ export function useScrollReveal(options = {}) {
                 }
             },
             {
-                threshold: options.threshold ?? 0.2,
-                rootMargin: options.rootMargin ?? '0px 0px -60px 0px',
+                threshold: options.threshold ?? 0,
+                rootMargin: options.rootMargin ?? '0px 0px -10% 0px',
             }
         );
 

@@ -2,18 +2,200 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #111827;
-  height: fit-content;
+/* ───────────────────────── Design tokens ─────────────────────────
+   Colours are stored as space-separated RGB triplets so Tailwind can
+   apply opacity (bg-accent/10). The JS side (charts) reads the same
+   variables, so this file is the single source of truth for both themes. */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --page: 251 250 247;
+  --band: 244 241 235;
+  --surface: 255 255 255;
+  --surface-2: 247 245 240;
+  --ink: 20 24 31;
+  --ink-2: 61 69 82;
+  --ink-3: 94 102 117;
+  --line: 226 221 211;
+  --accent: 30 95 194;
+  --on-accent: 255 255 255;
+  --alert: 194 65 12;
+  --gold: 146 88 6;
+  --ok: 4 120 87;
+  --violet: 98 80 214;
+
+  /* chart series (validated categorical palette, light steps) */
+  --s-blue: 42 120 214;
+  --s-orange: 235 104 52;
+  --s-green: 0 131 0;
+  --s-violet: 98 80 214;
+  --s-magenta: 232 123 164;
+  --s-red: 227 73 72;
+
+  --shadow-card: 0 1px 2px rgb(20 24 31 / 0.04), 0 8px 24px -12px rgb(20 24 31 / 0.12);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page: 12 17 29;
+  --band: 16 23 38;
+  --surface: 20 28 46;
+  --surface-2: 27 37 59;
+  --ink: 238 241 246;
+  --ink-2: 190 199 214;
+  --ink-3: 148 160 180;
+  --line: 38 49 73;
+  --accent: 122 169 255;
+  --on-accent: 10 17 32;
+  --alert: 251 146 60;
+  --gold: 251 191 36;
+  --ok: 52 211 153;
+  --violet: 144 133 233;
+
+  --s-blue: 57 135 229;
+  --s-orange: 217 89 38;
+  --s-green: 12 163 12;
+  --s-violet: 144 133 233;
+  --s-magenta: 213 81 129;
+  --s-red: 230 103 103;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: rgb(var(--page));
+  color: rgb(var(--ink));
+  font-family: theme('fontFamily.sans');
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Display face: the skill's bricolage setting (slightly condensed, optical size follows the text size). */
+.font-display {
+  font-stretch: 96%;
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.25);
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@layer components {
+  .container-story {
+    @apply mx-auto w-full max-w-7xl px-5 md:px-8;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-3;
+  }
+
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+    box-shadow: var(--shadow-card);
+  }
+
+  .prose-story {
+    @apply text-[16px] leading-[1.75] text-ink-2;
+  }
+  .prose-story p + p {
+    @apply mt-4;
+  }
+
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold cursor-pointer;
+    transition: transform 0.18s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px) scale(0.98); }
+  .btn-primary {
+    @apply bg-accent text-on-accent hover:opacity-90;
+  }
+  .btn-ghost {
+    @apply border border-line bg-surface text-ink hover:border-accent hover:text-accent;
+  }
+
+  .chip {
+    @apply inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border border-line bg-surface px-4 py-2 text-left text-[13px] font-medium text-ink-2 transition-all duration-150 hover:border-accent hover:text-ink active:scale-[0.98];
+  }
+  .chip[aria-pressed='true'] {
+    @apply border-accent bg-accent/10 text-ink;
+  }
+
+  .nav-link {
+    @apply text-sm font-medium text-ink-2 transition-colors hover:text-ink;
+  }
+  .nav-link--active {
+    @apply text-accent;
+  }
+}
+
+/* ───────────────────────── Scroll reveal ───────────────────────── */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-section.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* The chapter narrative stays in view beside its charts, but only on screens tall enough to show all of it. */
+@media (min-width: 1024px) and (min-height: 820px) {
+  .chapter-sticky {
+    position: sticky;
+    top: 5.5rem;
+  }
+}
+
+/* Hero line-draw animation (pathLength is normalised to 1 in the SVG) */
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2.2s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
+}
+.draw-line--late {
+  animation-delay: 0.8s;
+}
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.8s ease 2.2s forwards;
+}
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+.bob {
+  animation: bob 1.4s ease-in-out 3;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal-section { opacity: 1; transform: none; transition: none; }
+  .btn, .btn:hover, .btn:active { transition: none; transform: none; }
+  .draw-line { animation: none; stroke-dashoffset: 0; }
+  .fade-in { animation: none; opacity: 1; }
+  .bob { animation: none; }
+  body { transition: none; }
 }

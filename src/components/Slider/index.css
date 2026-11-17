@@ -1,0 +1,115 @@
+/* The control is a 44px-tall hit area (touch guideline); the visible track and thumb are drawn smaller inside it. */
+.slider {
+  --slider-color: rgb(var(--accent));
+  --slider-bubble: rgb(var(--accent));
+  --thumb: 44px;
+  width: 100%;
+}
+
+.slider__control {
+  position: relative;
+  height: var(--thumb);
+}
+
+.slider__track,
+.slider__fill {
+  position: absolute;
+  top: 50%;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 3px;
+}
+
+.slider__track {
+  left: calc(var(--thumb) / 2);
+  right: calc(var(--thumb) / 2);
+  background: rgb(var(--line));
+}
+
+.slider__fill {
+  background: var(--slider-color);
+}
+
+.slider__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  touch-action: pan-y;
+}
+
+/* Two stacked inputs: only the thumbs should catch the pointer. */
+.slider--range .slider__input {
+  pointer-events: none;
+}
+
+.slider__input::-webkit-slider-runnable-track { background: transparent; height: var(--thumb); }
+.slider__input::-moz-range-track { background: transparent; height: var(--thumb); }
+
+/* The thumb element is 44px so it is easy to grab; the visible dot and ring are painted inside it. */
+.slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--slider-color) 0 9px, rgb(var(--surface)) 9px 12px, transparent 12.5px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.slider__input::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--slider-color) 0 9px, rgb(var(--surface)) 9px 12px, transparent 12.5px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.slider__input:focus-visible::-webkit-slider-thumb { outline: 2px solid rgb(var(--accent)); outline-offset: -2px; }
+.slider__input:focus-visible::-moz-range-thumb { outline: 2px solid rgb(var(--accent)); outline-offset: -2px; }
+
+.slider__bubble {
+  position: absolute;
+  bottom: calc(100% - 4px);
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--slider-bubble);
+  color: rgb(var(--on-accent));
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.slider--bubble-always .slider__bubble,
+.slider--bubble-hover:hover .slider__bubble,
+.slider--bubble-hover:focus-within .slider__bubble {
+  opacity: 1;
+}
+
+.slider__marks {
+  position: relative;
+  height: 20px;
+  margin-top: -6px;
+}
+
+.slider__mark {
+  position: absolute;
+  transform: translateX(-50%);
+  color: rgb(var(--ink-3));
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 11px;
+}
