@@ -36,7 +36,7 @@ jobs:
 
       - run: npm run build
 
-      # GitHub Pages has no server-side routing: unknown paths such as /vizginius/team serve 404.html.
+      # GitHub Pages has no server-side routing: unknown paths such as /greece-is-shrinking-a-data-story/team serve 404.html.
       # Serving the app shell there lets the router handle deep links and page refreshes.
       - name: Add SPA fallback
         run: cp build/index.html build/404.html

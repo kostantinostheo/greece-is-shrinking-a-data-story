@@ -8,7 +8,7 @@ import { ThemeProvider } from './theme/ThemeContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <ThemeProvider>
-    <BrowserRouter basename="/vizginius">
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <App />
     </BrowserRouter>
   </ThemeProvider>
